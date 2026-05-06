@@ -1,0 +1,8 @@
+{
+    "rewrites": [
+        {
+            "source": "/files/v4/loaders/:id",
+            "destination": "/api/files/v4/loaders/[id]"
+        }
+    ]
+}
