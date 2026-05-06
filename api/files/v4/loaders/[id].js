@@ -120,7 +120,6 @@ export default function handler(req, res) {
         return res.status(404).send(`<h1 style="background:black;color:white;text-align:center;padding-top:20%">404 Not Found</h1>`)
     }
 
-    const { id } = req.query
     const scriptMap = {
         "705e7fe7aa288f0fe86900cedb1119b1": "myscript.lua",
         "5f2b9a8c1d4e73f0a6c1e9b27d8846aa": "myscript2.lua"
