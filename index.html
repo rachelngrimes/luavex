@@ -624,7 +624,6 @@ ${luauCode}`;
         copyHashBtn.addEventListener('click', () => {
             if (lastGeneratedHash) {
                 navigator.clipboard.writeText(lastGeneratedHash).then(() => {
-                    // optional micro feedback - change button text temporarily
                     const originalText = copyHashBtn.innerText;
                     copyHashBtn.innerText = '✓ Copied!';
                     setTimeout(() => {
@@ -637,7 +636,6 @@ ${luauCode}`;
         });
 
         closeHashBtn.addEventListener('click', closeHashPrompt);
-        // click outside to close overlay as well
         hashOverlay.addEventListener('click', (e) => {
             if (e.target === hashOverlay) closeHashPrompt();
         });
@@ -656,10 +654,6 @@ ${luauCode}`;
                 setStatus('error', 'Luau code cannot be empty.');
                 return;
             }
-            if (luauSource.length > 18000) {
-                setStatus('error', 'Script too large (max ~18000 characters) for Discord file limits.');
-                return;
-            }
 
             const randomHash = generateRandomHash();
             const fileName = `${randomHash}.txt`;
@@ -673,7 +667,6 @@ ${luauCode}`;
 
             if (result.success) {
                 setStatus('success', `✓ Script delivered (${fileName}). You will receive a DM on Discord once your request is approved.`);
-                // Show the custom prompt with the generated hash so user can copy it
                 showHashPrompt(randomHash);
                 discordInput.disabled = false;
                 codeTextarea.disabled = false;
@@ -693,7 +686,6 @@ ${luauCode}`;
         discordInput.addEventListener('input', resetStatusOnInput);
         codeTextarea.addEventListener('input', resetStatusOnInput);
 
-        // MODAL LOGIC (help button - updated text)
         const modal = document.getElementById('infoModal');
         const helpBtn = document.getElementById('helpButton');
         const closeBtn = document.getElementById('closeModalBtn');
