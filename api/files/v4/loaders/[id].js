@@ -10,62 +10,122 @@ export default function handler(req, res) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>ACCESS DENIED | 404</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuaVex</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000000; font-family: 'Inter', system-ui, sans-serif; height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .bg-pattern { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.4; pointer-events: none; }
-        .bg-pattern .dot-grid { position: absolute; width: 100%; height: 100%; background-image: radial-gradient(circle at 1px 1px, #2a2a2a 1px, transparent 1px); background-size: 40px 40px; }
-        .bg-pattern .gradient-blur { position: absolute; top: -20%; right: -10%; width: 70%; height: 70%; background: radial-gradient(ellipse at center, rgba(60,60,60,0.25) 0%, rgba(0,0,0,0) 70%); filter: blur(80px); }
-        .bg-pattern .gradient-blur-left { left: -20%; bottom: -20%; top: auto; right: auto; width: 60%; height: 60%; background: radial-gradient(ellipse at center, rgba(35,35,35,0.3) 0%, rgba(0,0,0,0) 70%); filter: blur(90px); }
-        .access-card { position: relative; z-index: 10; max-width: 900px; width: 90%; padding: 3rem 2.5rem; background: rgba(10,10,10,0.7); backdrop-filter: blur(12px); border-radius: 2.5rem; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 25px 45px -12px rgba(0,0,0,0.8); transition: transform 0.3s ease, box-shadow 0.3s ease; text-align: center; }
-        .access-card:hover { transform: translateY(-5px); box-shadow: 0 32px 55px -15px rgba(0,0,0,0.9); border-color: rgba(255,255,255,0.15); }
-        .error-code { font-size: 10rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1; background: linear-gradient(135deg, #ffffff 20%, #a0a0a0 80%); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 1rem; }
-        .denied-badge { display: inline-block; background: rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.2); border-radius: 100px; padding: 0.3rem 1.2rem; margin-bottom: 1.8rem; font-size: 0.85rem; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: #dddddd; }
-        .title { font-size: 2rem; font-weight: 600; color: #ffffff; margin-bottom: 1rem; }
-        .message { font-size: 1rem; color: #b0b0b0; max-width: 520px; margin: 0 auto 1.5rem auto; line-height: 1.5; }
-        .divider { width: 70px; height: 1px; background: rgba(255,255,255,0.2); margin: 1rem auto 1.2rem auto; }
-        .lock-icon { font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.7; }
-        .footnote { margin-top: 1rem; font-size: 0.75rem; color: #6a6a6a; }
-        .scan-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 1px, transparent 1px, transparent 4px); z-index: 20; }
-        @media (max-width: 600px) { .access-card { padding: 2rem 1.5rem; border-radius: 1.8rem; } .error-code { font-size: 5.5rem; } .title { font-size: 1.6rem; } .message { font-size: 0.9rem; } }
+        body {
+            background: #0f1117;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .title span { font-size: 22px; }
+        .code-box {
+            background: #1a1d27;
+            border: 1px solid #2a2d3a;
+            border-radius: 10px;
+            width: 700px;
+            max-width: 95vw;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+        }
+        .code-content {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            flex: 1;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .code-content .fn { color: #7aa2f7; }
+        .code-content .keyword { color: #e0af68; }
+        .code-content .string { color: #9ece6a; }
+        .code-content .comment { color: #6b7a99; font-style: italic; }
+        .copy-btn {
+            background: #2a2d3a;
+            color: #a9b1d6;
+            border: 1px solid #3a3d4a;
+            border-radius: 6px;
+            padding: 4px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            flex-shrink: 0;
+            margin-left: 16px;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover { background: #3a3d4a; color: white; }
+        .scrollbar-wrap {
+            border-top: 1px solid #2a2d3a;
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .scrollbar-wrap span { color: #3a3d4a; font-size: 16px; }
+        .scrollbar-track {
+            flex: 1;
+            height: 4px;
+            background: #2a2d3a;
+            border-radius: 2px;
+        }
+        .footnote {
+            margin-top: 16px;
+            font-size: 13px;
+            color: #4a5068;
+        }
+        .footnote a { color: #4a5068; text-decoration: none; }
+        .footnote a:hover { color: #7aa2f7; }
     </style>
 </head>
 <body>
-<div class="bg-pattern">
-    <div class="dot-grid"></div>
-    <div class="gradient-blur"></div>
-    <div class="gradient-blur-left"></div>
-</div>
-<div class="access-card">
-    <div class="lock-icon">⛔︎</div>
-    <div class="error-code">404</div>
-    <div class="denied-badge">ACCESS DENIED</div>
-    <h1 class="title">Restricted Area</h1>
-    <p class="message">The page you are looking for does not exist or you don't have permission to view it.<br>Your request has been logged. If you believe this is an error, verify the URL.</p>
-    <div class="divider"></div>
-    <div class="footnote">SECURITY PROTOCOL ACTIVE • REF: 0x4C3C_404A</div>
-</div>
-<div class="scan-overlay"></div>
-<script>
-    const card = document.querySelector('.access-card');
-    if(card) {
-        card.addEventListener('mousemove', (e) => {
-            const xPos = (e.clientX / window.innerWidth) * 30;
-            const yPos = (e.clientY / window.innerHeight) * 20;
-            card.style.transform = 'translateY(-3px) rotateX(' + (yPos * 0.02) + 'deg) rotateY(' + (xPos * 0.02) + 'deg)';
-        });
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'translateY(0px) rotateX(0deg) rotateY(0deg)';
-        });
-    }
-    const lock = document.querySelector('.lock-icon');
-    if(lock){ setInterval(() => { lock.style.opacity = '0.85'; setTimeout(()=>{ lock.style.opacity = '0.7'; }, 700); }, 2000); }
-</script>
+    <div class="title">
+        <span>📋</span> Loadstring
+    </div>
+    <div class="code-box">
+        <div class="code-header">
+            <div class="code-content">
+                <div><span class="comment">-- made by a fucking demon</span></div>
+                <div><span class="fn">loadstring</span>(<span class="keyword">game</span>:<span class="fn">HttpGet</span>(<span class="string">"https://luavex.vercel.app/files/v4/loaders/705e7fe7aa288f0fe86900cedb1119b1"</span>))()</div>
+            </div>
+            <button class="copy-btn" onclick="copyCode()">Copy</button>
+        </div>
+        <div class="scrollbar-wrap">
+            <span>◀</span>
+            <div class="scrollbar-track"></div>
+            <span>▶</span>
+        </div>
+    </div>
+    <div class="footnote">
+        Contents can not be displayed on browser • <a href="#">https://luavex.vercel.app/</a>
+    </div>
+    <script>
+        function copyCode() {
+            navigator.clipboard.writeText('-- made by a fucking demon\\nloadstring(game:HttpGet("https://luavex.vercel.app/files/v4/loaders/705e7fe7aa288f0fe86900cedb1119b1"))()')
+            const btn = document.querySelector('.copy-btn')
+            btn.innerText = 'Copied!'
+            setTimeout(() => btn.innerText = 'Copy', 2000)
+        }
+    </script>
 </body>
 </html>`)
     }
