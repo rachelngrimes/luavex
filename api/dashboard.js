@@ -6,50 +6,88 @@ const OWNER = "rachelngrimes"
 const REPO = "luavex"
 const BRANCH = "main"
 
+const loginAttempts = {}
+
 export default async function handler(req, res) {
     if (req.method !== "POST") return res.status(405).send("Method not allowed")
 
     const { password, action, scriptName, scriptContent, scriptId } = req.body
+    const ip = req.headers['x-forwarded-for'] || 'unknown'
+
+    // Rate limiting
+    if (action !== 'ping') {
+        if (!loginAttempts[ip]) loginAttempts[ip] = { count: 0, lockedUntil: 0 }
+        if (loginAttempts[ip].lockedUntil > Date.now()) {
+            const wait = Math.ceil((loginAttempts[ip].lockedUntil - Date.now()) / 1000)
+            return res.status(429).json({ error: `Too many attempts. Wait ${wait}s.` })
+        }
+    }
 
     if (password !== PASSWORD) {
+        if (!loginAttempts[ip]) loginAttempts[ip] = { count: 0, lockedUntil: 0 }
+        loginAttempts[ip].count++
+        if (loginAttempts[ip].count >= 5) {
+            loginAttempts[ip].lockedUntil = Date.now() + 60000
+            loginAttempts[ip].count = 0
+            return res.status(429).json({ error: "Too many attempts. Locked for 60s." })
+        }
         return res.status(401).json({ error: "Wrong password" })
     }
 
-    if (action === "upload") {
-        try {
-            const octokit = new Octokit({ auth: GITHUB_TOKEN })
+    if (loginAttempts[ip]) loginAttempts[ip] = { count: 0, lockedUntil: 0 }
 
-            // Upload the .lua file
+    const octokit = new Octokit({ auth: GITHUB_TOKEN })
+
+    // ping - just password check
+    if (action === 'ping') {
+        return res.status(400).json({ ok: true })
+    }
+
+    // list scripts
+    if (action === 'list') {
+        try {
+            const { data: idFile } = await octokit.repos.getContent({
+                owner: OWNER, repo: REPO,
+                path: "api/files/v4/loaders/[id].js",
+                ref: BRANCH
+            })
+            const content = Buffer.from(idFile.content, 'base64').toString('utf8')
+            const matches = [...content.matchAll(/"([a-f0-9]{32})":\s*"(.+?)\.lua"/g)]
+            const scripts = matches.map(m => ({ id: m[1], name: m[2] }))
+            return res.status(200).json({ success: true, scripts })
+        } catch (err) {
+            return res.status(500).json({ error: err.message })
+        }
+    }
+
+    // upload new script
+    if (action === 'upload') {
+        try {
             const luaPath = `scripts/${scriptName}.lua`
             const luaContent = Buffer.from(scriptContent).toString("base64")
 
             await octokit.repos.createOrUpdateFileContents({
-                owner: OWNER,
-                repo: REPO,
+                owner: OWNER, repo: REPO,
                 path: luaPath,
                 message: `Add script: ${scriptName}`,
                 content: luaContent,
                 branch: BRANCH
             })
 
-            // Get current [id].js
             const { data: currentFile } = await octokit.repos.getContent({
-                owner: OWNER,
-                repo: REPO,
+                owner: OWNER, repo: REPO,
                 path: "api/files/v4/loaders/[id].js",
                 ref: BRANCH
             })
 
             let currentContent = Buffer.from(currentFile.content, "base64").toString("utf8")
 
-            // Inject new script into scriptMap
             const newEntry = `        "${scriptId}": "${scriptName}.lua",`
             currentContent = currentContent.replace(
                 /const scriptMap = \{/,
                 `const scriptMap = {\n${newEntry}`
             )
 
-            // Inject new HTML block before the 404 fallback
             const newHtmlBlock = `
         if (id === "${scriptId}") {
             return res.status(401).send(\`<!DOCTYPE html>
@@ -106,10 +144,8 @@ export default async function handler(req, res) {
                 `${newHtmlBlock}        return res.status(404).send`
             )
 
-            // Push updated [id].js back to GitHub
             await octokit.repos.createOrUpdateFileContents({
-                owner: OWNER,
-                repo: REPO,
+                owner: OWNER, repo: REPO,
                 path: "api/files/v4/loaders/[id].js",
                 message: `Add loader for: ${scriptName}`,
                 content: Buffer.from(currentContent).toString("base64"),
@@ -121,9 +157,81 @@ export default async function handler(req, res) {
                 success: true,
                 loader: `loadstring(game:HttpGet("https://luavex.vercel.app/files/v4/loaders/${scriptId}"))()`
             })
-
         } catch (err) {
-            console.error(err)
+            return res.status(500).json({ error: "GitHub API error: " + err.message })
+        }
+    }
+
+    // update existing script content
+    if (action === 'update') {
+        try {
+            const luaPath = `scripts/${scriptName}.lua`
+            const { data: existingFile } = await octokit.repos.getContent({
+                owner: OWNER, repo: REPO,
+                path: luaPath,
+                ref: BRANCH
+            })
+            await octokit.repos.createOrUpdateFileContents({
+                owner: OWNER, repo: REPO,
+                path: luaPath,
+                message: `Update script: ${scriptName}`,
+                content: Buffer.from(scriptContent).toString("base64"),
+                sha: existingFile.sha,
+                branch: BRANCH
+            })
+            return res.status(200).json({ success: true })
+        } catch (err) {
+            return res.status(500).json({ error: "GitHub API error: " + err.message })
+        }
+    }
+
+    // delete script
+    if (action === 'delete') {
+        try {
+            const { data: currentFile } = await octokit.repos.getContent({
+                owner: OWNER, repo: REPO,
+                path: "api/files/v4/loaders/[id].js",
+                ref: BRANCH
+            })
+
+            let currentContent = Buffer.from(currentFile.content, "base64").toString("utf8")
+
+            // Remove scriptMap entry
+            currentContent = currentContent.replace(
+                new RegExp(`\\s*"${scriptId}":\\s*"${scriptName}\\.lua",?\\n?`, 'g'), '\n'
+            )
+
+            // Remove HTML block for this id
+            const blockRegex = new RegExp(
+                `\\s*if \\(id === "${scriptId}"\\) \\{[\\s\\S]*?\\}\\s*\n`, 'g'
+            )
+            currentContent = currentContent.replace(blockRegex, '\n')
+
+            await octokit.repos.createOrUpdateFileContents({
+                owner: OWNER, repo: REPO,
+                path: "api/files/v4/loaders/[id].js",
+                message: `Delete loader for: ${scriptName}`,
+                content: Buffer.from(currentContent).toString("base64"),
+                sha: currentFile.sha,
+                branch: BRANCH
+            })
+
+            // Delete the lua file
+            const { data: luaFile } = await octokit.repos.getContent({
+                owner: OWNER, repo: REPO,
+                path: `scripts/${scriptName}.lua`,
+                ref: BRANCH
+            })
+            await octokit.repos.deleteFile({
+                owner: OWNER, repo: REPO,
+                path: `scripts/${scriptName}.lua`,
+                message: `Delete script: ${scriptName}`,
+                sha: luaFile.sha,
+                branch: BRANCH
+            })
+
+            return res.status(200).json({ success: true })
+        } catch (err) {
             return res.status(500).json({ error: "GitHub API error: " + err.message })
         }
     }
