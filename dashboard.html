@@ -7,369 +7,122 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #080b12; color: white; font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
 
-        body {
-            background: #080b12;
-            color: white;
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+        .bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+        .bg-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(99,102,241,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.03) 1px, transparent 1px); background-size: 40px 40px; animation: gridMove 20s linear infinite; }
+        @keyframes gridMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
+        .bg-glow-1 { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%); top: -200px; left: -200px; animation: float1 8s ease-in-out infinite; }
+        .bg-glow-2 { position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%); bottom: -100px; right: -100px; animation: float2 10s ease-in-out infinite; }
+        @keyframes float1 { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(40px,40px); } }
+        @keyframes float2 { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-30px,-30px); } }
 
-        /* animated bg */
-        .bg {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            overflow: hidden;
-        }
-        .bg-grid {
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(99,102,241,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(99,102,241,0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            animation: gridMove 20s linear infinite;
-        }
-        @keyframes gridMove {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(40px); }
-        }
-        .bg-glow-1 {
-            position: absolute;
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
-            top: -200px; left: -200px;
-            animation: float1 8s ease-in-out infinite;
-        }
-        .bg-glow-2 {
-            position: absolute;
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%);
-            bottom: -100px; right: -100px;
-            animation: float2 10s ease-in-out infinite;
-        }
-        @keyframes float1 {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(40px, 40px); }
-        }
-        @keyframes float2 {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-30px, -30px); }
-        }
-
-        /* login */
-        #loginScreen {
-            position: relative;
-            z-index: 10;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.5s ease;
-        }
-        .login-card {
-            background: rgba(15, 17, 23, 0.8);
-            border: 1px solid rgba(99,102,241,0.2);
-            border-radius: 20px;
-            padding: 40px;
-            width: 380px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 0 60px rgba(99,102,241,0.1), 0 25px 50px rgba(0,0,0,0.5);
-            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .login-logo {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-        .login-logo .logo-icon {
-            width: 56px; height: 56px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin: 0 auto 16px auto;
-            box-shadow: 0 8px 32px rgba(99,102,241,0.4);
-            animation: pulse 3s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 8px 32px rgba(99,102,241,0.4); }
-            50% { box-shadow: 0 8px 48px rgba(99,102,241,0.7); }
-        }
+        #loginScreen { position: relative; z-index: 10; min-height: 100vh; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.5s ease; }
+        .login-card { background: rgba(15,17,23,0.8); border: 1px solid rgba(99,102,241,0.2); border-radius: 20px; padding: 40px; width: 380px; backdrop-filter: blur(20px); box-shadow: 0 0 60px rgba(99,102,241,0.1), 0 25px 50px rgba(0,0,0,0.5); animation: slideUp 0.6s cubic-bezier(0.16,1,0.3,1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .login-logo { text-align: center; margin-bottom: 32px; }
+        .logo-icon { width: 56px; height: 56px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px auto; box-shadow: 0 8px 32px rgba(99,102,241,0.4); animation: pulse 3s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 8px 32px rgba(99,102,241,0.4); } 50% { box-shadow: 0 8px 48px rgba(99,102,241,0.7); } }
         .login-logo h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
         .login-logo p { font-size: 13px; color: #4a5068; margin-top: 4px; }
 
-        /* dashboard */
-        #dashboard {
-            display: none;
-            position: relative;
-            z-index: 10;
-            min-height: 100vh;
-            padding: 0;
-        }
+        #dashboard { display: none; position: relative; z-index: 10; min-height: 100vh; }
+        .navbar { display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(8,11,18,0.8); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; animation: fadeDown 0.5s ease; }
+        @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .nav-logo { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+        .dot { width: 8px; height: 8px; background: #6366f1; border-radius: 50%; box-shadow: 0 0 10px #6366f1; animation: blink 2s ease-in-out infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .nav-badge { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #a5b4fc; font-size: 11px; padding: 4px 10px; border-radius: 100px; font-weight: 500; }
 
-        /* navbar */
-        .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px 40px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            background: rgba(8,11,18,0.8);
-            backdrop-filter: blur(20px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            animation: fadeDown 0.5s ease;
-        }
-        @keyframes fadeDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-        .nav-logo .dot {
-            width: 8px; height: 8px;
-            background: #6366f1;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #6366f1;
-            animation: blink 2s ease-in-out infinite;
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-        .nav-badge {
-            background: rgba(99,102,241,0.15);
-            border: 1px solid rgba(99,102,241,0.3);
-            color: #a5b4fc;
-            font-size: 11px;
-            padding: 4px 10px;
-            border-radius: 100px;
-            font-weight: 500;
-        }
+        .main { max-width: 760px; margin: 0 auto; padding: 48px 24px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* main content */
-        .main {
-            max-width: 720px;
-            margin: 0 auto;
-            padding: 48px 24px;
-            animation: fadeIn 0.6s ease 0.1s both;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .tabs { display: flex; gap: 8px; margin-bottom: 32px; background: rgba(15,17,23,0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 6px; }
+        .tab { flex: 1; padding: 10px; border-radius: 10px; border: none; background: transparent; color: #4a5068; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s ease; }
+        .tab.active { background: rgba(99,102,241,0.2); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.25); }
+        .tab:hover:not(.active) { color: #a9b1d6; }
 
-        .page-header {
-            margin-bottom: 36px;
-        }
-        .page-header h2 {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #fff 40%, #6366f1);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .page-header p {
-            color: #4a5068;
-            font-size: 14px;
-            margin-top: 6px;
-        }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
 
-        .card {
-            background: rgba(15,17,23,0.6);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 20px;
-            padding: 32px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-            transition: border-color 0.3s ease;
-        }
+        .page-header { margin-bottom: 28px; }
+        .page-header h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; background: linear-gradient(135deg, #fff 40%, #6366f1); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .page-header p { color: #4a5068; font-size: 13px; margin-top: 4px; }
+
+        .card { background: rgba(15,17,23,0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 28px; backdrop-filter: blur(20px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); transition: border-color 0.3s ease; }
         .card:hover { border-color: rgba(99,102,241,0.2); }
 
-        .field { margin-bottom: 24px; }
-        .field label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: #6366f1;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 8px;
-        }
-        input, textarea {
-            width: 100%;
-            background: rgba(8,11,18,0.8);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 12px;
-            color: white;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            padding: 12px 16px;
-            outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            resize: vertical;
-        }
-        input:focus, textarea:focus {
-            border-color: rgba(99,102,241,0.5);
-            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
-        }
+        .field { margin-bottom: 20px; }
+        .field label { display: block; font-size: 11px; font-weight: 600; color: #6366f1; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+        input, textarea, select { width: 100%; background: rgba(8,11,18,0.8); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; color: white; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 12px 16px; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease; resize: vertical; }
+        input:focus, textarea:focus, select:focus { border-color: rgba(99,102,241,0.5); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
         textarea { min-height: 200px; }
+        select option { background: #0f1117; }
 
-        .btn {
-            width: 100%;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 14px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
+        .btn { width: 100%; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; border-radius: 12px; padding: 13px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s ease; position: relative; overflow: hidden; }
+        .btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent); opacity: 0; transition: opacity 0.2s ease; }
         .btn:hover::before { opacity: 1; }
         .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(99,102,241,0.4); }
         .btn:active { transform: translateY(0); }
-        .btn:disabled {
-            background: rgba(99,102,241,0.2);
-            color: #4a5068;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
+        .btn:disabled { background: rgba(99,102,241,0.2); color: #4a5068; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .btn-danger:hover { box-shadow: 0 8px 30px rgba(239,68,68,0.4); }
+        .btn-secondary { background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25); color: #a5b4fc; }
+        .btn-secondary:hover { background: rgba(99,102,241,0.2); box-shadow: none; }
 
-        /* loading spinner inside btn */
-        .spinner {
-            display: inline-block;
-            width: 14px; height: 14px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
+        .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: middle; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* result box */
-        .result-box {
-            margin-top: 24px;
-            display: none;
-            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .result-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: #4a5068;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 8px;
-        }
-        .result-content {
-            background: rgba(8,11,18,0.9);
-            border: 1px solid rgba(99,102,241,0.3);
-            border-radius: 12px;
-            padding: 16px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            color: #a5b4fc;
-            word-break: break-all;
-            line-height: 1.6;
-            box-shadow: 0 0 30px rgba(99,102,241,0.1);
-        }
-        .result-content.error {
-            border-color: rgba(248,113,113,0.3);
-            color: #f87171;
-            box-shadow: 0 0 30px rgba(248,113,113,0.1);
-        }
-        .copy-btn {
-            margin-top: 12px;
-            width: 100%;
-            background: rgba(99,102,241,0.1);
-            border: 1px solid rgba(99,102,241,0.25);
-            color: #a5b4fc;
-            border-radius: 10px;
-            padding: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.2s ease;
-        }
-        .copy-btn:hover { background: rgba(99,102,241,0.2); color: white; }
+        .result-box { margin-top: 20px; display: none; animation: slideUp 0.4s cubic-bezier(0.16,1,0.3,1); }
+        .result-label { font-size: 11px; font-weight: 600; color: #4a5068; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+        .result-content { background: rgba(8,11,18,0.9); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #a5b4fc; word-break: break-all; line-height: 1.6; box-shadow: 0 0 30px rgba(99,102,241,0.1); }
+        .result-content.error { border-color: rgba(248,113,113,0.3); color: #f87171; box-shadow: 0 0 30px rgba(248,113,113,0.1); }
+        .copy-btn-sm { margin-top: 10px; width: 100%; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25); color: #a5b4fc; border-radius: 10px; padding: 10px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s ease; }
+        .copy-btn-sm:hover { background: rgba(99,102,241,0.2); color: white; }
 
-        /* password input */
         .pw-field { position: relative; margin-bottom: 20px; }
         .pw-field input { padding-right: 44px; }
-        .pw-toggle {
-            position: absolute;
-            right: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #4a5068;
-            cursor: pointer;
-            font-size: 16px;
-            transition: color 0.2s;
-        }
+        .pw-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #4a5068; cursor: pointer; font-size: 16px; transition: color 0.2s; width: auto; padding: 0; }
         .pw-toggle:hover { color: #a5b4fc; }
 
-        .error-msg {
-            margin-top: 12px;
-            font-size: 13px;
-            color: #f87171;
-            display: none;
-            text-align: center;
-            animation: shake 0.4s ease;
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-6px); }
-            75% { transform: translateX(6px); }
-        }
+        .error-msg { margin-top: 12px; font-size: 13px; color: #f87171; display: none; text-align: center; animation: shake 0.4s ease; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
-        /* success checkmark */
-        .success-icon {
-            display: inline-block;
-            width: 20px; height: 20px;
-            background: #10b981;
-            border-radius: 50%;
-            color: white;
-            font-size: 11px;
-            text-align: center;
-            line-height: 20px;
-            margin-right: 6px;
-            vertical-align: middle;
-        }
+        .success-icon { display: inline-block; width: 20px; height: 20px; background: #10b981; border-radius: 50%; color: white; font-size: 11px; text-align: center; line-height: 20px; margin-right: 6px; vertical-align: middle; }
+
+        /* script list */
+        .script-list { display: flex; flex-direction: column; gap: 12px; }
+        .script-item { background: rgba(15,17,23,0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; transition: border-color 0.2s ease; animation: fadeIn 0.3s ease; }
+        .script-item:hover { border-color: rgba(99,102,241,0.2); }
+        .script-info { flex: 1; min-width: 0; }
+        .script-name { font-size: 14px; font-weight: 600; color: white; margin-bottom: 4px; }
+        .script-id { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #4a5068; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .script-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .icon-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #a9b1d6; padding: 7px 12px; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s ease; white-space: nowrap; }
+        .icon-btn:hover { background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.3); color: #a5b4fc; }
+        .icon-btn.danger:hover { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.3); color: #f87171; }
+
+        .empty-state { text-align: center; padding: 48px 24px; color: #4a5068; }
+        .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; }
+
+        /* modal */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 1000; display: none; align-items: center; justify-content: center; animation: fadeIn 0.2s ease; }
+        .modal-overlay.open { display: flex; }
+        .modal { background: #0f1117; border: 1px solid rgba(99,102,241,0.2); border-radius: 20px; padding: 32px; width: 90%; max-width: 520px; box-shadow: 0 40px 80px rgba(0,0,0,0.6); animation: slideUp 0.3s cubic-bezier(0.16,1,0.3,1); }
+        .modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .modal p { color: #4a5068; font-size: 13px; margin-bottom: 24px; }
+        .modal-actions { display: flex; gap: 10px; }
+        .modal-actions .btn { flex: 1; }
+
+        /* toast */
+        .toast { position: fixed; bottom: 24px; right: 24px; background: rgba(15,17,23,0.95); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 14px 20px; font-size: 13px; color: white; z-index: 9999; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); transform: translateY(80px); opacity: 0; transition: all 0.3s cubic-bezier(0.16,1,0.3,1); pointer-events: none; }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { border-color: rgba(16,185,129,0.4); }
+        .toast.error { border-color: rgba(248,113,113,0.4); }
+
+        /* confirm modal */
+        #confirmModal .modal h3 { color: #f87171; }
     </style>
 </head>
 <body>
@@ -411,36 +164,137 @@
     </nav>
 
     <div class="main">
-        <div class="page-header">
-            <h2>Generate Loader</h2>
-            <p>Upload a Luau script and get a protected loader link instantly</p>
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('upload')">⚡ Upload Script</button>
+            <button class="tab" onclick="switchTab('manage')">📋 Manage Scripts</button>
+            <button class="tab" onclick="switchTab('edit')">✏️ Edit Script</button>
         </div>
 
-        <div class="card">
-            <div class="field">
-                <label>Script Name</label>
-                <input type="text" id="scriptName" placeholder="e.g. esp, aimbot, walkspeed">
+        <!-- Upload Tab -->
+        <div class="tab-content active" id="tab-upload">
+            <div class="page-header">
+                <h2>Upload Script</h2>
+                <p>Generate a new protected loader link</p>
             </div>
-            <div class="field">
-                <label>Lua Script</label>
-                <textarea id="scriptContent" placeholder="Paste your Luau script here..."></textarea>
+            <div class="card">
+                <div class="field">
+                    <label>Script Name</label>
+                    <input type="text" id="scriptName" placeholder="e.g. esp, aimbot, walkspeed">
+                </div>
+                <div class="field">
+                    <label>Lua Script</label>
+                    <textarea id="scriptContent" placeholder="Paste your Luau script here..."></textarea>
+                </div>
+                <button class="btn" id="uploadBtn" onclick="confirmUpload()">Generate Protected Loader</button>
+                <div class="result-box" id="resultBox">
+                    <div class="result-label" id="resultLabel">Generated Loader</div>
+                    <div class="result-content" id="resultContent"></div>
+                    <button class="copy-btn-sm" id="copyBtn" onclick="copyLoader()" style="display:none">Copy Loader</button>
+                </div>
             </div>
-            <button class="btn" id="uploadBtn" onclick="uploadScript()">
-                Generate Protected Loader
-            </button>
+        </div>
 
-            <div class="result-box" id="resultBox">
-                <div class="result-label" id="resultLabel">Generated Loader</div>
-                <div class="result-content" id="resultContent"></div>
-                <button class="copy-btn" id="copyBtn" onclick="copyLoader()" style="display:none">Copy Loader</button>
+        <!-- Manage Tab -->
+        <div class="tab-content" id="tab-manage">
+            <div class="page-header">
+                <h2>Manage Scripts</h2>
+                <p>View, copy, and delete your uploaded scripts</p>
+            </div>
+            <div class="script-list" id="scriptList">
+                <div class="empty-state">
+                    <div class="icon">📭</div>
+                    <p>Loading scripts...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Tab -->
+        <div class="tab-content" id="tab-edit">
+            <div class="page-header">
+                <h2>Edit Script</h2>
+                <p>Update an existing script's code</p>
+            </div>
+            <div class="card">
+                <div class="field">
+                    <label>Select Script</label>
+                    <select id="editScriptSelect" onchange="loadScriptForEdit()">
+                        <option value="">-- Select a script --</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Updated Lua Code</label>
+                    <textarea id="editScriptContent" placeholder="Paste updated Luau script here..."></textarea>
+                </div>
+                <button class="btn" id="editBtn" onclick="confirmEdit()">Save Changes</button>
+                <div class="result-box" id="editResultBox">
+                    <div class="result-content" id="editResultContent"></div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Confirm Upload Modal -->
+<div class="modal-overlay" id="confirmUploadModal">
+    <div class="modal">
+        <h3>Confirm Upload</h3>
+        <p id="confirmUploadText">Are you sure you want to upload this script?</p>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal('confirmUploadModal')">Cancel</button>
+            <button class="btn" onclick="uploadScript()">Yes, Upload</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Edit Modal -->
+<div class="modal-overlay" id="confirmEditModal">
+    <div class="modal">
+        <h3>Confirm Edit</h3>
+        <p id="confirmEditText">Are you sure you want to update this script?</p>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal('confirmEditModal')">Cancel</button>
+            <button class="btn" onclick="editScript()">Yes, Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal">
+        <h3>⚠ Delete Script</h3>
+        <p id="confirmText">Are you sure? This cannot be undone.</p>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal('confirmModal')">Cancel</button>
+            <button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
 <script>
     let password = ""
     let generatedLoader = ""
+    let pendingDelete = null
+    let scripts = []
+    let inactivityTimer = null
+    const INACTIVITY_LIMIT = 10 * 60 * 1000 // 10 minutes
+
+    function resetInactivity() {
+        clearTimeout(inactivityTimer)
+        inactivityTimer = setTimeout(() => {
+            password = ""
+            document.getElementById('dashboard').style.display = 'none'
+            document.getElementById('loginScreen').style.display = 'flex'
+            document.getElementById('passwordInput').value = ''
+            showToast('Logged out due to inactivity', 'error')
+        }, INACTIVITY_LIMIT)
+    }
+
+    document.addEventListener('mousemove', resetInactivity)
+    document.addEventListener('keydown', resetInactivity)
+    document.addEventListener('click', resetInactivity)
 
     function togglePw() {
         const input = document.getElementById('passwordInput')
@@ -466,13 +320,138 @@
             password = input
             document.getElementById('loginScreen').style.display = 'none'
             document.getElementById('dashboard').style.display = 'block'
+            resetInactivity()
+            loadScripts()
         } else {
+            const data = await res.json().catch(() => ({}))
             btn.disabled = false
             btn.innerHTML = 'Unlock Dashboard'
+            err.innerText = data.error || 'Incorrect password. Try again.'
             err.style.display = 'block'
             err.style.animation = 'none'
             setTimeout(() => err.style.animation = 'shake 0.4s ease', 10)
         }
+    }
+
+    function switchTab(tab) {
+        document.querySelectorAll('.tab').forEach((t, i) => {
+            t.classList.toggle('active', ['upload','manage','edit'][i] === tab)
+        })
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'))
+        document.getElementById('tab-' + tab).classList.add('active')
+        if (tab === 'manage') loadScripts()
+        if (tab === 'edit') populateEditSelect()
+    }
+
+    async function loadScripts() {
+        const list = document.getElementById('scriptList')
+        list.innerHTML = '<div class="empty-state"><div class="icon">⏳</div><p>Loading scripts...</p></div>'
+
+        const res = await fetch('/api/dashboard', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password, action: 'list' })
+        })
+        const data = await res.json()
+
+        if (!data.success || !data.scripts.length) {
+            list.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>No scripts uploaded yet.</p></div>'
+            scripts = []
+            return
+        }
+
+        scripts = data.scripts
+        list.innerHTML = ''
+        scripts.forEach(s => {
+            const item = document.createElement('div')
+            item.className = 'script-item'
+            item.innerHTML = `
+                <div class="script-info">
+                    <div class="script-name">${s.name}.lua</div>
+                    <div class="script-id">${s.id}</div>
+                </div>
+                <div class="script-actions">
+                    <button class="icon-btn" onclick="copyScriptLoader('${s.id}')">Copy Loader</button>
+                    <button class="icon-btn danger" onclick="askDelete('${s.id}', '${s.name}')">Delete</button>
+                </div>
+            `
+            list.appendChild(item)
+        })
+    }
+
+    function populateEditSelect() {
+        const sel = document.getElementById('editScriptSelect')
+        sel.innerHTML = '<option value="">-- Select a script --</option>'
+        scripts.forEach(s => {
+            const opt = document.createElement('option')
+            opt.value = s.name
+            opt.innerText = s.name + '.lua'
+            sel.appendChild(opt)
+        })
+    }
+
+    function loadScriptForEdit() {
+        // just clear textarea when switching
+        document.getElementById('editScriptContent').value = ''
+        document.getElementById('editResultBox').style.display = 'none'
+    }
+
+    function copyScriptLoader(id) {
+        navigator.clipboard.writeText(`loadstring(game:HttpGet("https://luavex.vercel.app/files/v4/loaders/${id}"))()`)
+        showToast('Loader copied!', 'success')
+    }
+
+    function askDelete(id, name) {
+        pendingDelete = { id, name }
+        document.getElementById('confirmText').innerText = `Delete "${name}.lua"? This cannot be undone.`
+        document.getElementById('confirmModal').classList.add('open')
+    }
+
+    async function confirmDelete() {
+        if (!pendingDelete) return
+        closeModal('confirmModal')
+        const { id, name } = pendingDelete
+        pendingDelete = null
+
+        const res = await fetch('/api/dashboard', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password, action: 'delete', scriptId: id, scriptName: name })
+        })
+        const data = await res.json()
+        if (data.success) {
+            showToast(`"${name}.lua" deleted!`, 'success')
+            loadScripts()
+        } else {
+            showToast('Error: ' + data.error, 'error')
+        }
+    }
+
+    function confirmUpload() {
+        const name = document.getElementById('scriptName').value.trim()
+        const content = document.getElementById('scriptContent').value.trim()
+        if (!name || !content) {
+            const resultBox = document.getElementById('resultBox')
+            const resultContent = document.getElementById('resultContent')
+            resultBox.style.display = 'block'
+            resultContent.className = 'result-content error'
+            resultContent.innerText = '⚠ Please fill in both fields.'
+            document.getElementById('copyBtn').style.display = 'none'
+            return
+        }
+        document.getElementById('confirmUploadText').innerText = `Upload "${name}.lua" as a new protected script?`
+        document.getElementById('confirmUploadModal').classList.add('open')
+    }
+
+    function confirmEdit() {
+        const name = document.getElementById('editScriptSelect').value
+        const content = document.getElementById('editScriptContent').value.trim()
+        if (!name || !content) {
+            showToast('Please select a script and paste new code.', 'error')
+            return
+        }
+        document.getElementById('confirmEditText').innerText = `Update "${name}.lua" with new code?`
+        document.getElementById('confirmEditModal').classList.add('open')
     }
 
     function generateId() {
@@ -480,6 +459,7 @@
     }
 
     async function uploadScript() {
+        closeModal('confirmUploadModal')
         const name = document.getElementById('scriptName').value.trim().replace(/\s+/g, '_')
         const content = document.getElementById('scriptContent').value.trim()
         const resultBox = document.getElementById('resultBox')
@@ -487,18 +467,10 @@
         const resultLabel = document.getElementById('resultLabel')
         const copyBtn = document.getElementById('copyBtn')
         const btn = document.getElementById('uploadBtn')
-
-        if (!name || !content) {
-            resultBox.style.display = 'block'
-            resultContent.className = 'result-content error'
-            resultContent.innerText = '⚠ Please fill in both the script name and content.'
-            copyBtn.style.display = 'none'
-            return
-        }
-
         const id = generateId()
+
         btn.disabled = true
-        btn.innerHTML = '<span class="spinner"></span>Uploading to GitHub...'
+        btn.innerHTML = '<span class="spinner"></span>Uploading...'
         resultBox.style.display = 'none'
         copyBtn.style.display = 'none'
 
@@ -512,8 +484,6 @@
         btn.disabled = false
         btn.innerHTML = 'Generate Protected Loader'
         resultBox.style.display = 'block'
-        resultBox.style.animation = 'none'
-        setTimeout(() => resultBox.style.animation = 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)', 10)
 
         if (data.success) {
             generatedLoader = data.loader
@@ -521,8 +491,41 @@
             resultContent.className = 'result-content'
             resultContent.innerText = data.loader
             copyBtn.style.display = 'block'
+            showToast('Script uploaded!', 'success')
         } else {
             resultLabel.innerText = 'Error'
+            resultContent.className = 'result-content error'
+            resultContent.innerText = '✗ ' + data.error
+        }
+    }
+
+    async function editScript() {
+        closeModal('confirmEditModal')
+        const name = document.getElementById('editScriptSelect').value
+        const content = document.getElementById('editScriptContent').value.trim()
+        const resultBox = document.getElementById('editResultBox')
+        const resultContent = document.getElementById('editResultContent')
+        const btn = document.getElementById('editBtn')
+
+        btn.disabled = true
+        btn.innerHTML = '<span class="spinner"></span>Saving...'
+
+        const res = await fetch('/api/dashboard', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password, action: 'update', scriptName: name, scriptContent: content })
+        })
+
+        const data = await res.json()
+        btn.disabled = false
+        btn.innerHTML = 'Save Changes'
+        resultBox.style.display = 'block'
+
+        if (data.success) {
+            resultContent.className = 'result-content'
+            resultContent.innerText = '✓ Script updated successfully!'
+            showToast(`"${name}.lua" updated!`, 'success')
+        } else {
             resultContent.className = 'result-content error'
             resultContent.innerText = '✗ ' + data.error
         }
@@ -533,6 +536,17 @@
         const btn = document.getElementById('copyBtn')
         btn.innerText = '✓ Copied!'
         setTimeout(() => btn.innerText = 'Copy Loader', 2000)
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('open')
+    }
+
+    function showToast(msg, type = 'success') {
+        const toast = document.getElementById('toast')
+        toast.innerText = (type === 'success' ? '✓ ' : '✗ ') + msg
+        toast.className = `toast ${type} show`
+        setTimeout(() => toast.className = `toast ${type}`, 3000)
     }
 </script>
 </body>
