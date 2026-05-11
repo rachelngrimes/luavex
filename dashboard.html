@@ -4,63 +4,437 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LuaVex Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0f1117; color: white; font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
-        h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-        .subtitle { color: #4a5068; font-size: 14px; margin-bottom: 40px; }
-        .card { background: #1a1d27; border: 1px solid #2a2d3a; border-radius: 12px; padding: 28px; width: 100%; max-width: 600px; }
-        label { display: block; font-size: 13px; color: #a9b1d6; margin-bottom: 6px; }
-        input, textarea {
-            width: 100%; background: #0f1117; border: 1px solid #2a2d3a; border-radius: 8px;
-            color: white; font-family: 'JetBrains Mono', monospace; font-size: 13px;
-            padding: 10px 12px; margin-bottom: 18px; outline: none; resize: vertical;
-        }
-        input:focus, textarea:focus { border-color: #7aa2f7; }
-        textarea { min-height: 180px; }
-        .btn { width: 100%; background: #1d4ed8; color: white; border: none; border-radius: 8px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; }
-        .btn:hover { background: #2563eb; }
-        .btn:disabled { background: #2a2d3a; color: #4a5068; cursor: not-allowed; }
-        .result { margin-top: 20px; background: #0f1117; border: 1px solid #2a2d3a; border-radius: 8px; padding: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #9ece6a; display: none; word-break: break-all; }
-        .error { color: #f87171; }
-        .copy-result { margin-top: 10px; width: 100%; background: #2a2d3a; color: #a9b1d6; border: 1px solid #3a3d4a; border-radius: 6px; padding: 8px; font-size: 13px; cursor: pointer; font-family: 'Inter', sans-serif; display: none; }
-        .copy-result:hover { background: #3a3d4a; color: white; }
 
-        /* login screen */
-        .login-card { background: #1a1d27; border: 1px solid #2a2d3a; border-radius: 12px; padding: 28px; width: 100%; max-width: 360px; }
-        .login-card h2 { font-size: 20px; margin-bottom: 20px; }
+        body {
+            background: #080b12;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* animated bg */
+        .bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(99,102,241,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99,102,241,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridMove 20s linear infinite;
+        }
+        @keyframes gridMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(40px); }
+        }
+        .bg-glow-1 {
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
+            top: -200px; left: -200px;
+            animation: float1 8s ease-in-out infinite;
+        }
+        .bg-glow-2 {
+            position: absolute;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%);
+            bottom: -100px; right: -100px;
+            animation: float2 10s ease-in-out infinite;
+        }
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(40px, 40px); }
+        }
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-30px, -30px); }
+        }
+
+        /* login */
+        #loginScreen {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.5s ease;
+        }
+        .login-card {
+            background: rgba(15, 17, 23, 0.8);
+            border: 1px solid rgba(99,102,241,0.2);
+            border-radius: 20px;
+            padding: 40px;
+            width: 380px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 60px rgba(99,102,241,0.1), 0 25px 50px rgba(0,0,0,0.5);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .login-logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .login-logo .logo-icon {
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 16px auto;
+            box-shadow: 0 8px 32px rgba(99,102,241,0.4);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 8px 32px rgba(99,102,241,0.4); }
+            50% { box-shadow: 0 8px 48px rgba(99,102,241,0.7); }
+        }
+        .login-logo h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+        .login-logo p { font-size: 13px; color: #4a5068; margin-top: 4px; }
+
+        /* dashboard */
+        #dashboard {
+            display: none;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        /* navbar */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: rgba(8,11,18,0.8);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: fadeDown 0.5s ease;
+        }
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .nav-logo .dot {
+            width: 8px; height: 8px;
+            background: #6366f1;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #6366f1;
+            animation: blink 2s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .nav-badge {
+            background: rgba(99,102,241,0.15);
+            border: 1px solid rgba(99,102,241,0.3);
+            color: #a5b4fc;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-weight: 500;
+        }
+
+        /* main content */
+        .main {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 48px 24px;
+            animation: fadeIn 0.6s ease 0.1s both;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            margin-bottom: 36px;
+        }
+        .page-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 40%, #6366f1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .page-header p {
+            color: #4a5068;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .card {
+            background: rgba(15,17,23,0.6);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 32px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            transition: border-color 0.3s ease;
+        }
+        .card:hover { border-color: rgba(99,102,241,0.2); }
+
+        .field { margin-bottom: 24px; }
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6366f1;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+        input, textarea {
+            width: 100%;
+            background: rgba(8,11,18,0.8);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 12px;
+            color: white;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            padding: 12px 16px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            resize: vertical;
+        }
+        input:focus, textarea:focus {
+            border-color: rgba(99,102,241,0.5);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+        textarea { min-height: 200px; }
+
+        .btn {
+            width: 100%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .btn:hover::before { opacity: 1; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(99,102,241,0.4); }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled {
+            background: rgba(99,102,241,0.2);
+            color: #4a5068;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* loading spinner inside btn */
+        .spinner {
+            display: inline-block;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* result box */
+        .result-box {
+            margin-top: 24px;
+            display: none;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .result-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #4a5068;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+        .result-content {
+            background: rgba(8,11,18,0.9);
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #a5b4fc;
+            word-break: break-all;
+            line-height: 1.6;
+            box-shadow: 0 0 30px rgba(99,102,241,0.1);
+        }
+        .result-content.error {
+            border-color: rgba(248,113,113,0.3);
+            color: #f87171;
+            box-shadow: 0 0 30px rgba(248,113,113,0.1);
+        }
+        .copy-btn {
+            margin-top: 12px;
+            width: 100%;
+            background: rgba(99,102,241,0.1);
+            border: 1px solid rgba(99,102,241,0.25);
+            color: #a5b4fc;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover { background: rgba(99,102,241,0.2); color: white; }
+
+        /* password input */
+        .pw-field { position: relative; margin-bottom: 20px; }
+        .pw-field input { padding-right: 44px; }
+        .pw-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #4a5068;
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.2s;
+        }
+        .pw-toggle:hover { color: #a5b4fc; }
+
+        .error-msg {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #f87171;
+            display: none;
+            text-align: center;
+            animation: shake 0.4s ease;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        /* success checkmark */
+        .success-icon {
+            display: inline-block;
+            width: 20px; height: 20px;
+            background: #10b981;
+            border-radius: 50%;
+            color: white;
+            font-size: 11px;
+            text-align: center;
+            line-height: 20px;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
 
-<!-- Login Screen -->
+<div class="bg">
+    <div class="bg-grid"></div>
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+</div>
+
+<!-- Login -->
 <div id="loginScreen">
     <div class="login-card">
-        <h2>🔐 LuaVex Dashboard</h2>
-        <label>Password</label>
-        <input type="password" id="passwordInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')login()">
-        <button class="btn" onclick="login()">Login</button>
-        <div id="loginError" style="margin-top:12px;font-size:13px;color:#f87171;display:none">Wrong password</div>
+        <div class="login-logo">
+            <div class="logo-icon">⚡</div>
+            <h1>LuaVex</h1>
+            <p>Dashboard — restricted access</p>
+        </div>
+        <div class="field">
+            <label>Password</label>
+            <div class="pw-field">
+                <input type="password" id="passwordInput" placeholder="Enter your password" onkeydown="if(event.key==='Enter')login()">
+                <button class="pw-toggle" onclick="togglePw()">👁</button>
+            </div>
+        </div>
+        <button class="btn" id="loginBtn" onclick="login()">Unlock Dashboard</button>
+        <div class="error-msg" id="loginError">Incorrect password. Try again.</div>
     </div>
 </div>
 
 <!-- Dashboard -->
-<div id="dashboard" style="display:none;width:100%;max-width:600px">
-    <h1>⚡ LuaVex Dashboard</h1>
-    <p class="subtitle">Upload a script and generate a protected loader link</p>
+<div id="dashboard">
+    <nav class="navbar">
+        <div class="nav-logo">
+            <div class="dot"></div>
+            LuaVex
+        </div>
+        <div class="nav-badge">Admin Dashboard</div>
+    </nav>
 
-    <div class="card">
-        <label>Script Name (no spaces)</label>
-        <input type="text" id="scriptName" placeholder="e.g. esp, aimbot, walkspeed">
+    <div class="main">
+        <div class="page-header">
+            <h2>Generate Loader</h2>
+            <p>Upload a Luau script and get a protected loader link instantly</p>
+        </div>
 
-        <label>Lua Script</label>
-        <textarea id="scriptContent" placeholder="Paste your Lua script here..."></textarea>
+        <div class="card">
+            <div class="field">
+                <label>Script Name</label>
+                <input type="text" id="scriptName" placeholder="e.g. esp, aimbot, walkspeed">
+            </div>
+            <div class="field">
+                <label>Lua Script</label>
+                <textarea id="scriptContent" placeholder="Paste your Luau script here..."></textarea>
+            </div>
+            <button class="btn" id="uploadBtn" onclick="uploadScript()">
+                Generate Protected Loader
+            </button>
 
-        <button class="btn" id="uploadBtn" onclick="uploadScript()">Generate Loader</button>
-
-        <div class="result" id="result"></div>
-        <button class="copy-result" id="copyBtn" onclick="copyLoader()">Copy Loader</button>
+            <div class="result-box" id="resultBox">
+                <div class="result-label" id="resultLabel">Generated Loader</div>
+                <div class="result-content" id="resultContent"></div>
+                <button class="copy-btn" id="copyBtn" onclick="copyLoader()" style="display:none">Copy Loader</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -68,22 +442,37 @@
     let password = ""
     let generatedLoader = ""
 
-    function login() {
+    function togglePw() {
+        const input = document.getElementById('passwordInput')
+        input.type = input.type === 'password' ? 'text' : 'password'
+    }
+
+    async function login() {
         const input = document.getElementById('passwordInput').value
-        fetch('/api/dashboard', {
+        const btn = document.getElementById('loginBtn')
+        const err = document.getElementById('loginError')
+
+        btn.disabled = true
+        btn.innerHTML = '<span class="spinner"></span>Verifying...'
+        err.style.display = 'none'
+
+        const res = await fetch('/api/dashboard', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ password: input, action: 'ping' })
-        }).then(r => {
-            // Wrong password returns 401, anything else means password was accepted
-            if (r.status === 400) {
-                password = input
-                document.getElementById('loginScreen').style.display = 'none'
-                document.getElementById('dashboard').style.display = 'block'
-            } else {
-                document.getElementById('loginError').style.display = 'block'
-            }
         })
+
+        if (res.status === 400) {
+            password = input
+            document.getElementById('loginScreen').style.display = 'none'
+            document.getElementById('dashboard').style.display = 'block'
+        } else {
+            btn.disabled = false
+            btn.innerHTML = 'Unlock Dashboard'
+            err.style.display = 'block'
+            err.style.animation = 'none'
+            setTimeout(() => err.style.animation = 'shake 0.4s ease', 10)
+        }
     }
 
     function generateId() {
@@ -93,21 +482,24 @@
     async function uploadScript() {
         const name = document.getElementById('scriptName').value.trim().replace(/\s+/g, '_')
         const content = document.getElementById('scriptContent').value.trim()
-        const result = document.getElementById('result')
+        const resultBox = document.getElementById('resultBox')
+        const resultContent = document.getElementById('resultContent')
+        const resultLabel = document.getElementById('resultLabel')
         const copyBtn = document.getElementById('copyBtn')
         const btn = document.getElementById('uploadBtn')
 
         if (!name || !content) {
-            result.style.display = 'block'
-            result.className = 'result error'
-            result.innerText = 'Please fill in both fields!'
+            resultBox.style.display = 'block'
+            resultContent.className = 'result-content error'
+            resultContent.innerText = '⚠ Please fill in both the script name and content.'
+            copyBtn.style.display = 'none'
             return
         }
 
         const id = generateId()
         btn.disabled = true
-        btn.innerText = 'Uploading...'
-        result.style.display = 'none'
+        btn.innerHTML = '<span class="spinner"></span>Uploading to GitHub...'
+        resultBox.style.display = 'none'
         copyBtn.style.display = 'none'
 
         const res = await fetch('/api/dashboard', {
@@ -118,24 +510,28 @@
 
         const data = await res.json()
         btn.disabled = false
-        btn.innerText = 'Generate Loader'
-        result.style.display = 'block'
+        btn.innerHTML = 'Generate Protected Loader'
+        resultBox.style.display = 'block'
+        resultBox.style.animation = 'none'
+        setTimeout(() => resultBox.style.animation = 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)', 10)
 
         if (data.success) {
             generatedLoader = data.loader
-            result.className = 'result'
-            result.innerText = data.loader
+            resultLabel.innerHTML = '<span class="success-icon">✓</span>Loader Generated'
+            resultContent.className = 'result-content'
+            resultContent.innerText = data.loader
             copyBtn.style.display = 'block'
         } else {
-            result.className = 'result error'
-            result.innerText = 'Error: ' + data.error
+            resultLabel.innerText = 'Error'
+            resultContent.className = 'result-content error'
+            resultContent.innerText = '✗ ' + data.error
         }
     }
 
     function copyLoader() {
         navigator.clipboard.writeText(generatedLoader)
         const btn = document.getElementById('copyBtn')
-        btn.innerText = 'Copied!'
+        btn.innerText = '✓ Copied!'
         setTimeout(() => btn.innerText = 'Copy Loader', 2000)
     }
 </script>
