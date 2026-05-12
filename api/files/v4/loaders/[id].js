@@ -160,18 +160,6 @@ export default function handler(req, res) {
 </body>
 </html>`)
         }
-
-
-        if (id === "4fb65fbbbc7e3749790d934a690fee9e") {
-            return res.status(401).send(`<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LuaVex</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0f1117; color: white; font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .title { font-size: 20px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
         .title span { font-size: 22px; }
@@ -215,7 +203,6 @@ export default function handler(req, res) {
     }
 
     const scriptMap = {
-        "4fb65fbbbc7e3749790d934a690fee9e": "1.lua",
         "705e7fe7aa288f0fe86900cedb1119b1": "myscript.lua",
         "5f2b9a8c1d4e73f0a6c1e9b27d8846aa": "myscript2.lua",
     }
