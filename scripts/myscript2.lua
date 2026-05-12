@@ -46,5 +46,5 @@ Players.LocalPlayer.Idled:connect(function()
     VirtualUser:ClickButton2(Vector2.new())
     TextLabel_2.Text = "Status: Saved"
     wait(5)
-    TextLabel_2.Text = "Status: Active"
+    TextLabel_2.Text = "Status: Active1"
 end)
