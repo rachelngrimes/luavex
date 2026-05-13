@@ -10,9 +10,5 @@
     "782cb7b5d699cf8c1de92e4391b9c449": {
         "name": "kloader",
         "file": "kloader.lua"
-    },
-    "9228a2e98ada69c0ee946674af556799": {
-        "name": "lee",
-        "file": "lee.lua"
     }
 }
