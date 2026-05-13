@@ -1,7 +1,14 @@
 local HttpService = game:GetService("HttpService")
 local HWID = game:GetService("RbxAnalyticsService"):GetClientId()
+local username = game.Players.LocalPlayer.Name
 
-local res = game:HttpGet("https://luafly.vercel.app/api/redeem?key=" .. key .. "&hwid=" .. HWID .. "&username=" .. game.Players.LocalPlayer.Name)
+local res = game:HttpGet("https://luafly.vercel.app/api/redeem?key=" .. (key or "") .. "&hwid=" .. HWID .. "&username=" .. username)
+
+if res == nil or res == "" then
+    print("Error: No response from server.")
+    return
+end
+
 local data = HttpService:JSONDecode(res)
 
 if data.success then
