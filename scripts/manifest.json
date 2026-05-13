@@ -10,5 +10,9 @@
     "18e4db09b0e7289fdc4d463d874c6480": {
         "name": "whitelist",
         "file": "whitelist.lua"
+    },
+    "782cb7b5d699cf8c1de92e4391b9c449": {
+        "name": "kloader",
+        "file": "kloader.lua"
     }
 }
