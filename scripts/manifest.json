@@ -14,5 +14,9 @@
     "67869cdace6d99e9a20fabf4034da5ac": {
         "name": "statuschecker",
         "file": "statuschecker.lua"
+    },
+    "7226980f1b92267aea64f5e30a9c5215": {
+        "name": "hwidreset",
+        "file": "hwidreset.lua"
     }
 }
