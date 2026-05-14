@@ -90,7 +90,7 @@ export default async function handler(req, res) {
 
             return res.status(200).json({
                 success: true,
-                loader: `loadstring(game:HttpGet("https://luavex.vercel.app/files/v4/loaders/${scriptId}"))()`
+                loader: `loadstring(game:HttpGet("https://luavex.localplayer.dev/files/v4/loaders/${scriptId}"))()`
             })
         } catch (err) {
             return res.status(500).json({ error: "GitHub API error: " + err.message })
