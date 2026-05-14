@@ -52,16 +52,16 @@ export default function handler(req, res) {
         <div class="code-header">
             <div class="code-content">
                 <div><span class="comment">-- made by a fucking demon</span></div>
-                <div><span class="fn">loadstring</span>(<span class="keyword">game</span>:<span class="fn">HttpGet</span>(<span class="string">"https://luavex.vercel.app/files/v4/loaders/${id}"</span>))()</div>
+                <div><span class="fn">loadstring</span>(<span class="keyword">game</span>:<span class="fn">HttpGet</span>(<span class="string">"https://luavex.localplayer.dev/files/v4/loaders/${id}"</span>))()</div>
             </div>
             <button class="copy-btn" onclick="copyCode()">Copy</button>
         </div>
         <div class="scrollbar-wrap"><span>◀</span><div class="scrollbar-track"></div><span>▶</span></div>
     </div>
-    <div class="footnote">Contents can not be displayed on browser • <a href="#">https://luavex.vercel.app/</a></div>
+    <div class="footnote">Contents can not be displayed on browser • <a href="#">https://luavex.localplayer.dev/</a></div>
     <script>
         function copyCode() {
-            navigator.clipboard.writeText('-- made by a fucking demon\\nloadstring(game:HttpGet("https://luavex.vercel.app/files/v4/loaders/${id}"))()')
+            navigator.clipboard.writeText('-- made by a fucking demon\\nloadstring(game:HttpGet("https://luavex.localplayer.dev/files/v4/loaders/${id}"))()')
             const btn = document.querySelector('.copy-btn')
             btn.innerText = 'Copied!'
             setTimeout(() => btn.innerText = 'Copy', 2000)
